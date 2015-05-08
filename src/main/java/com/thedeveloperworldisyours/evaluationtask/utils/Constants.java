@@ -10,4 +10,7 @@ public class Constants {
     public static final String CONTENT_LIST = "contentList.json";
     public static final String CONTENT = "content/";
     public static final String JSON = ".json";
+    public static final String INTENT = "intent";
+    public static final String NAME_FILE_LIST = "list.txt";
+    public static final String NAME_EXTENSION = "config.txt";
 }

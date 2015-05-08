@@ -2,20 +2,17 @@ package com.thedeveloperworldisyours.evaluationtask.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thedeveloperworldisyours.evaluationtask.R;
-import com.thedeveloperworldisyours.evaluationtask.adapters.ListAdapter;
 import com.thedeveloperworldisyours.evaluationtask.models.Item;
 import com.thedeveloperworldisyours.evaluationtask.utils.Constants;
 import com.thedeveloperworldisyours.evaluationtask.utils.Utils;
@@ -27,65 +24,88 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
+public class DetailActivity extends ActionBarActivity {
 
     private ProgressDialog mProgress;
-    private ListView mListView;
-    private List<Item> mItemList;
+    private String mId;
+    private TextView mTitleView;
+    private TextView mSubTitleView;
+    private Item mItem;
+    StringBuilder mStringBuilderNameFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_detail);
+
+        mStringBuilderNameFile = new StringBuilder();
+        mStringBuilderNameFile.append(mId);
+        mStringBuilderNameFile.append(Constants.NAME_EXTENSION);
 
         mProgress = new ProgressDialog(this, R.style.Transparent);
-        mListView = (ListView) findViewById(R.id.activity_main_listView);
-        mItemList = new ArrayList<Item>();
-
+        mTitleView = (TextView) findViewById(R.id.activity_detail_title);
+        mSubTitleView = (TextView) findViewById(R.id.activity_detail_subtitle);
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            return;
+        }
+        mId = extras.getString(Constants.INTENT);
         getData();
     }
 
     public void getData() {
-        if (Utils.readFromFile(MainActivity.this, Constants.NAME_FILE_LIST).equals("")) {
-            if (Utils.isOnline(MainActivity.this)) {
-                RequestTask task = new RequestTask(MainActivity.this);
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(Constants.URL);
-                stringBuilder.append(Constants.CONTENT_LIST);
-                task.execute(stringBuilder.toString());
 
-            } else {
-                Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-            }
+        if (Utils.readFromFile(this, mStringBuilderNameFile.toString()).equals("")) {
+            if (Utils.isOnline(this)) {
+            RequestTask task = new RequestTask(this);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(Constants.URL);
+            stringBuilder.append(Constants.CONTENT);
+            stringBuilder.append(mId);
+            stringBuilder.append(Constants.JSON);
+            task.execute(stringBuilder.toString());
+
         } else {
-            buildListView();
+            Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+        }
+        }else{
+            buildView();
         }
     }
 
-    public void buildListView() {
+    public void buildView(){
+        covertJSON(Utils.readFromFile(this, mStringBuilderNameFile.toString()));
 
-        String json = Utils.readFromFile(this, Constants.NAME_FILE_LIST);
-        returnRequest(this,json);
-
-        mListView.setAdapter(new ListAdapter(MainActivity.this, 0, mItemList));
-        mListView.setOnItemClickListener(this);
     }
 
+    public void covertJSON(String json){
+        Log.v("","");
+        try {
+            JSONObject itemFatherJSON = new JSONObject(json);
+            JSONObject itemJSON = new JSONObject(itemFatherJSON.get("item").toString());
+
+            mItem =  new Item(itemJSON.get("id").toString(),itemJSON.get("title").toString(),itemJSON.get("subtitle").toString(), itemJSON.get("body").toString(), itemJSON.get("date").toString());
+            mTitleView.setText(mItem.getTitle());
+            mSubTitleView.setText(mItem.getSubtitle());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
         return true;
     }
 
@@ -102,44 +122,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    public void returnRequest(Activity activity,  String json){
-
-
-        try {
-
-            JSONObject obj = new JSONObject(json);
-            JSONArray array = new JSONArray();
-            array = (JSONArray) obj.get("items");
-            getListData(array);
-            Log.d("My App", array.toString());
-
-        } catch (Throwable t) {
-            Log.e("My App", "Could not parse malformed JSON: \"" + json + "\"");
-        }
-    }
-
-    public void getListData(JSONArray itemsArray) throws JSONException {
-        if(itemsArray!=null && itemsArray.length()>0){
-
-            JSONObject itemJSON = new JSONObject();
-
-            for (int i=0; i <itemsArray.length();i++){
-                itemJSON = itemsArray.getJSONObject(i);
-                Item item = new Item(itemJSON.get("id").toString(),itemJSON.get("title").toString(),itemJSON.get("subtitle").toString(),itemJSON.get("date").toString());
-                mItemList.add(item);
-            }
-        }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(Constants.INTENT, mItemList.get(position).getId());
-        startActivity(intent);
-
     }
 
     public class RequestTask extends AsyncTask<String, String, String> {
@@ -191,10 +173,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             super.onPostExecute(result);
             mDialog.dismiss();
             Log.d("RequestTask", result.toString());
-            Utils.writeToFile(result, Constants.NAME_FILE_LIST, mActivity);
-            buildListView();
+
+            Utils.writeToFile(result, mStringBuilderNameFile.toString(), mActivity);
+            buildView();
         }
     }
-
 }
-

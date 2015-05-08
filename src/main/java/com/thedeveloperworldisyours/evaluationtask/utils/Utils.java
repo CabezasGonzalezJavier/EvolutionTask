@@ -1,6 +1,7 @@
 package com.thedeveloperworldisyours.evaluationtask.utils;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -30,10 +31,10 @@ public class Utils {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public static void writeToFile(String data, Activity activity) {
+    public static void writeToFile(String data,String name, Activity activity) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-                    activity.openFileOutput("config.txt", Context.MODE_PRIVATE));
+                    activity.openFileOutput(name, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
         } catch (IOException e) {
@@ -41,12 +42,12 @@ public class Utils {
         }
     }
 
-    public static String readFromFile(Activity activity) {
+    public static String readFromFile(Activity activity, String name) {
 
         String ret = "";
 
         try {
-            InputStream inputStream = activity.openFileInput("config.txt");
+            InputStream inputStream = activity.openFileInput(name);
 
             if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(

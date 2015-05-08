@@ -22,6 +22,14 @@ public class Item {
         this.date = date;
     }
 
+    public Item(String id, String title, String subtitle, String body, String date) {
+        this.id = id;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.body = body;
+        this.date = date;
+    }
+
     /**
      *
      * @return
