@@ -50,6 +50,7 @@ public class DetailActivity extends ActionBarActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         mStringBuilderNameFile = new StringBuilder();
@@ -59,7 +60,7 @@ public class DetailActivity extends ActionBarActivity {
         mProgress = new ProgressDialog(this, R.style.Transparent);
         mTitleView = (TextView) findViewById(R.id.activity_detail_title);
         mSubTitleView = (TextView) findViewById(R.id.activity_detail_subtitle);
-        mDateView= (TextView) findViewById(R.id.activity_detail_date);
+        mDateView = (TextView) findViewById(R.id.activity_detail_date);
         mBodyView = (TextView) findViewById(R.id.activity_detail_body);
 
         Bundle extras = getIntent().getExtras();
@@ -77,7 +78,7 @@ public class DetailActivity extends ActionBarActivity {
 
         if (Utils.readFromFile(this, mStringBuilderNameFile.toString()).equals("")) {
             refresh();
-        }else{
+        } else {
             buildView();
         }
     }
@@ -85,7 +86,7 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * Get data from internet
      */
-    public void refresh(){
+    public void refresh() {
         if (Utils.isOnline(this)) {
             RequestTask task = new RequestTask(this);
             StringBuilder stringBuilder = new StringBuilder();
@@ -103,21 +104,22 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * Built View
      */
-    public void buildView(){
+    public void buildView() {
         covertJSON(Utils.readFromFile(this, mStringBuilderNameFile.toString()));
 
     }
 
     /**
      * Covert data of String to object java
+     *
      * @param json
      */
-    public void covertJSON(String json){
+    public void covertJSON(String json) {
         try {
             JSONObject itemFatherJSON = new JSONObject(json);
             JSONObject itemJSON = new JSONObject(itemFatherJSON.get("item").toString());
 
-            mItem =  new Item(itemJSON.get("id").toString(),itemJSON.get("title").toString(),itemJSON.get("subtitle").toString(), itemJSON.get("body").toString(), itemJSON.get("date").toString());
+            mItem = new Item(itemJSON.get("id").toString(), itemJSON.get("title").toString(), itemJSON.get("subtitle").toString(), itemJSON.get("body").toString(), itemJSON.get("date").toString());
             showData();
 
         } catch (JSONException e) {
@@ -130,7 +132,7 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * Show the data
      */
-    public void showData(){
+    public void showData() {
         getSupportActionBar().setTitle(mItem.getTitle());
         getSupportActionBar().setSubtitle(mItem.getSubtitle());
         mTitleView.setText(mItem.getTitle());
@@ -153,12 +155,16 @@ public class DetailActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            refresh();
-            return true;
-        }
 
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -219,3 +225,4 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 }
+
