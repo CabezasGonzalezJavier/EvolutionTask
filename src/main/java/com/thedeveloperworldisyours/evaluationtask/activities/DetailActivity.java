@@ -53,10 +53,6 @@ public class DetailActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        mStringBuilderNameFile = new StringBuilder();
-        mStringBuilderNameFile.append(mId);
-        mStringBuilderNameFile.append(Constants.NAME_EXTENSION);
-
         mProgress = new ProgressDialog(this, R.style.Transparent);
         mTitleView = (TextView) findViewById(R.id.activity_detail_title);
         mSubTitleView = (TextView) findViewById(R.id.activity_detail_subtitle);
@@ -68,6 +64,10 @@ public class DetailActivity extends ActionBarActivity {
             return;
         }
         mId = extras.getString(Constants.INTENT);
+
+        mStringBuilderNameFile = new StringBuilder();
+        mStringBuilderNameFile.append(mId);
+        mStringBuilderNameFile.append(Constants.NAME_EXTENSION);
         getData();
     }
 
