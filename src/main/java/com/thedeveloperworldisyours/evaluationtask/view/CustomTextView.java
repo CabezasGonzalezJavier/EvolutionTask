@@ -29,13 +29,14 @@ public class CustomTextView extends TextView {
         init(null);
     }
 
+    /**
+     * Init type font
+     * @param attrs
+     */
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.TextViewForm);
-            //String fontName = a.getString(R.styleable.EditTextForm_fontName);
-            //if (fontName!=null) {
             setTypeface(MainApplication.Fonts.PENCIL);
-            //}
             a.recycle();
         }
     }

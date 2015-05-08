@@ -61,6 +61,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         getData();
     }
 
+    /**
+     * Get data
+     */
     public void getData() {
         if (Utils.readFromFile(MainActivity.this, Constants.NAME_FILE_LIST).equals("")) {
             refresh();
@@ -69,6 +72,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * Get data from internet
+     */
     public void refresh(){
         if (Utils.isOnline(MainActivity.this)) {
             RequestTask task = new RequestTask(MainActivity.this);
@@ -82,6 +88,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * Build the list
+     */
     public void buildListView() {
 
         String json = Utils.readFromFile(this, Constants.NAME_FILE_LIST);
@@ -117,6 +126,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     }
 
 
+    /**
+     * Convert data String to object java
+     * @param activity
+     * @param json
+     */
     public void returnRequest(Activity activity,  String json){
 
 
@@ -132,6 +146,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * Create list of data
+     * @param itemsArray
+     * @throws JSONException
+     */
     public void getListData(JSONArray itemsArray) throws JSONException {
         if(itemsArray!=null && itemsArray.length()>0){
 
@@ -160,6 +179,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mSwipeLayout.setRefreshing(false);
     }
 
+    /**
+     * Add a REST interface serving JSON
+     */
     public class RequestTask extends AsyncTask<String, String, String> {
 
 

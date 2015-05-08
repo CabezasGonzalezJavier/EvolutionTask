@@ -70,6 +70,9 @@ public class DetailActivity extends ActionBarActivity {
         getData();
     }
 
+    /**
+     * Get data
+     */
     public void getData() {
 
         if (Utils.readFromFile(this, mStringBuilderNameFile.toString()).equals("")) {
@@ -79,6 +82,9 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Get data from internet
+     */
     public void refresh(){
         if (Utils.isOnline(this)) {
             RequestTask task = new RequestTask(this);
@@ -94,30 +100,43 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Built View
+     */
     public void buildView(){
         covertJSON(Utils.readFromFile(this, mStringBuilderNameFile.toString()));
 
     }
 
+    /**
+     * Covert data of String to object java
+     * @param json
+     */
     public void covertJSON(String json){
-        Log.v("","");
         try {
             JSONObject itemFatherJSON = new JSONObject(json);
             JSONObject itemJSON = new JSONObject(itemFatherJSON.get("item").toString());
 
             mItem =  new Item(itemJSON.get("id").toString(),itemJSON.get("title").toString(),itemJSON.get("subtitle").toString(), itemJSON.get("body").toString(), itemJSON.get("date").toString());
+            showData();
 
-            getSupportActionBar().setTitle(mItem.getTitle());
-            getSupportActionBar().setSubtitle(mItem.getSubtitle());
-            mTitleView.setText(mItem.getTitle());
-            mSubTitleView.setText(mItem.getSubtitle());
-            mDateView.setText(mItem.getDate());
-            mBodyView.setText(mItem.getBody());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    /**
+     * Show the data
+     */
+    public void showData(){
+        getSupportActionBar().setTitle(mItem.getTitle());
+        getSupportActionBar().setSubtitle(mItem.getSubtitle());
+        mTitleView.setText(mItem.getTitle());
+        mSubTitleView.setText(mItem.getSubtitle());
+        mDateView.setText(mItem.getDate());
+        mBodyView.setText(mItem.getBody());
     }
 
     @Override
@@ -143,6 +162,9 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Add a REST interface serving JSON
+     */
     public class RequestTask extends AsyncTask<String, String, String> {
 
 

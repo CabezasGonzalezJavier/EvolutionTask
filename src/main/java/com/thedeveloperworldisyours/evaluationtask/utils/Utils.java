@@ -18,12 +18,12 @@ import java.io.OutputStreamWriter;
  * Created by javiergonzalezcabezas on 8/5/15.
  */
 public class Utils {
+
     /**
      * Check internet
      * @param activity
      * @return
      */
-
     public static boolean isOnline(Activity activity) {
         ConnectivityManager cm =
                 (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -31,6 +31,12 @@ public class Utils {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    /**
+     * Write to file
+     * @param data
+     * @param name
+     * @param activity
+     */
     public static void writeToFile(String data,String name, Activity activity) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
@@ -42,6 +48,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Read from file
+     * @param activity
+     * @param name
+     * @return
+     */
     public static String readFromFile(Activity activity, String name) {
 
         String ret = "";

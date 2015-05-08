@@ -29,6 +29,9 @@ public class ListAdapter extends ArrayAdapter<Item> {
         mListArtist = objects;
     }
 
+    /**
+     * Allows to avoid the findViewById() method in an adapter
+     */
     static class ViewHolder {
         public TextView title;
         public TextView subtitle;
