@@ -38,6 +38,8 @@ public class DetailActivity extends ActionBarActivity {
     private String mId;
     private TextView mTitleView;
     private TextView mSubTitleView;
+    private TextView mDateView;
+    private TextView mBodyView;
     private Item mItem;
     StringBuilder mStringBuilderNameFile;
 
@@ -46,6 +48,10 @@ public class DetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         mStringBuilderNameFile = new StringBuilder();
         mStringBuilderNameFile.append(mId);
         mStringBuilderNameFile.append(Constants.NAME_EXTENSION);
@@ -53,6 +59,9 @@ public class DetailActivity extends ActionBarActivity {
         mProgress = new ProgressDialog(this, R.style.Transparent);
         mTitleView = (TextView) findViewById(R.id.activity_detail_title);
         mSubTitleView = (TextView) findViewById(R.id.activity_detail_subtitle);
+        mDateView= (TextView) findViewById(R.id.activity_detail_date);
+        mBodyView = (TextView) findViewById(R.id.activity_detail_body);
+
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
@@ -64,7 +73,14 @@ public class DetailActivity extends ActionBarActivity {
     public void getData() {
 
         if (Utils.readFromFile(this, mStringBuilderNameFile.toString()).equals("")) {
-            if (Utils.isOnline(this)) {
+            refresh();
+        }else{
+            buildView();
+        }
+    }
+
+    public void refresh(){
+        if (Utils.isOnline(this)) {
             RequestTask task = new RequestTask(this);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(Constants.URL);
@@ -75,9 +91,6 @@ public class DetailActivity extends ActionBarActivity {
 
         } else {
             Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-        }
-        }else{
-            buildView();
         }
     }
 
@@ -93,8 +106,13 @@ public class DetailActivity extends ActionBarActivity {
             JSONObject itemJSON = new JSONObject(itemFatherJSON.get("item").toString());
 
             mItem =  new Item(itemJSON.get("id").toString(),itemJSON.get("title").toString(),itemJSON.get("subtitle").toString(), itemJSON.get("body").toString(), itemJSON.get("date").toString());
+
+            getSupportActionBar().setTitle(mItem.getTitle());
+            getSupportActionBar().setSubtitle(mItem.getSubtitle());
             mTitleView.setText(mItem.getTitle());
             mSubTitleView.setText(mItem.getSubtitle());
+            mDateView.setText(mItem.getDate());
+            mBodyView.setText(mItem.getBody());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -117,7 +135,8 @@ public class DetailActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            refresh();
             return true;
         }
 
@@ -172,7 +191,6 @@ public class DetailActivity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             mDialog.dismiss();
-            Log.d("RequestTask", result.toString());
 
             Utils.writeToFile(result, mStringBuilderNameFile.toString(), mActivity);
             buildView();

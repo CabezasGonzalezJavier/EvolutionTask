@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">EvaluationTask</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
     <string name="request_task_loading">Loading&#8230;</string>
     <string name="no_connection">Error connection. You must check your connection.</string>
     <string name="title_activity_detail">DetailActivity</string>

@@ -25,6 +25,6 @@ public class MainApplication extends Application {
      */
     private void initializeTypefaces() {
 
-//        Fonts.PENCIL = Typeface.createFromAsset(getAssets(), Constants.FONT_PATH);
+        Fonts.PENCIL = Typeface.createFromAsset(getAssets(), Constants.FONT_PATH);
     }
 }

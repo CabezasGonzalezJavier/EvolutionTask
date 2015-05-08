@@ -5,7 +5,7 @@ package com.thedeveloperworldisyours.evaluationtask.utils;
  */
 public class Constants {
 
-    public static final String FONT_PATH = "font/aller_bdl.ttf";
+    public static final String FONT_PATH = "aller_bdl.ttf";
     public static final String URL = "http://dynamic.pulselive.com/test/native/";
     public static final String CONTENT_LIST = "contentList.json";
     public static final String CONTENT = "content/";

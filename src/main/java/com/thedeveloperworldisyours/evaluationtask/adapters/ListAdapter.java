@@ -29,19 +29,30 @@ public class ListAdapter extends ArrayAdapter<Item> {
         mListArtist = objects;
     }
 
+    static class ViewHolder {
+        public TextView title;
+        public TextView subtitle;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) mActivity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_item, parent, false);
-        TextView name = (TextView) rowView.findViewById(R.id.item_list_firstLine);
-        TextView genres = (TextView) rowView.findViewById(R.id.item_list_secondLine);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.item_list_icon);
+        View rowView = convertView;
+        // reuse views
+        if (rowView == null) {
+            LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.list_item,parent, false);
+            // configure view holder
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.title = (TextView) rowView.findViewById(R.id.item_list_firstLine);
+            viewHolder.subtitle = (TextView) rowView.findViewById(R.id.item_list_secondLine);
+            rowView.setTag(viewHolder);
+        }
 
-        name.setText(mListArtist.get(position).getTitle());
-        genres.setText(mListArtist.get(position).getSubtitle());
+        // fill data
+        ViewHolder holder = (ViewHolder) rowView.getTag();
 
+        holder.title.setText(mListArtist.get(position).getTitle());
+        holder.subtitle.setText(mListArtist.get(position).getSubtitle());
 
         return rowView;
     }

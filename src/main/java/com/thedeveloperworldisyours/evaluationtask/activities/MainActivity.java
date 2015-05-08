@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,16 +38,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private ProgressDialog mProgress;
     private ListView mListView;
     private List<Item> mItemList;
+    private ListAdapter mListAdapter;
+    private SwipeRefreshLayout mSwipeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_container);
+        mSwipeLayout.setOnRefreshListener(this);
 
         mProgress = new ProgressDialog(this, R.style.Transparent);
         mListView = (ListView) findViewById(R.id.activity_main_listView);
@@ -57,18 +63,22 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     public void getData() {
         if (Utils.readFromFile(MainActivity.this, Constants.NAME_FILE_LIST).equals("")) {
-            if (Utils.isOnline(MainActivity.this)) {
-                RequestTask task = new RequestTask(MainActivity.this);
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(Constants.URL);
-                stringBuilder.append(Constants.CONTENT_LIST);
-                task.execute(stringBuilder.toString());
-
-            } else {
-                Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-            }
+            refresh();
         } else {
             buildListView();
+        }
+    }
+
+    public void refresh(){
+        if (Utils.isOnline(MainActivity.this)) {
+            RequestTask task = new RequestTask(MainActivity.this);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(Constants.URL);
+            stringBuilder.append(Constants.CONTENT_LIST);
+            task.execute(stringBuilder.toString());
+
+        } else {
+            Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -77,7 +87,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         String json = Utils.readFromFile(this, Constants.NAME_FILE_LIST);
         returnRequest(this,json);
 
-        mListView.setAdapter(new ListAdapter(MainActivity.this, 0, mItemList));
+        mListAdapter = new ListAdapter(MainActivity.this, 0, mItemList);
+        mListView.setAdapter(mListAdapter);
         mListView.setOnItemClickListener(this);
     }
 
@@ -97,7 +108,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            refresh();
             return true;
         }
 
@@ -114,7 +126,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             JSONArray array = new JSONArray();
             array = (JSONArray) obj.get("items");
             getListData(array);
-            Log.d("My App", array.toString());
 
         } catch (Throwable t) {
             Log.e("My App", "Could not parse malformed JSON: \"" + json + "\"");
@@ -140,6 +151,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         intent.putExtra(Constants.INTENT, mItemList.get(position).getId());
         startActivity(intent);
 
+    }
+
+    @Override
+    public void onRefresh() {
+        mListAdapter.clear();
+        getData();
+        mSwipeLayout.setRefreshing(false);
     }
 
     public class RequestTask extends AsyncTask<String, String, String> {
@@ -190,7 +208,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             mDialog.dismiss();
-            Log.d("RequestTask", result.toString());
             Utils.writeToFile(result, Constants.NAME_FILE_LIST, mActivity);
             buildListView();
         }

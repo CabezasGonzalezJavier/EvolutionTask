@@ -1,45 +1,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:padding="6dip">
 
-    <ImageView
-        android:id="@+id/item_list_icon"
-        android:layout_width="80dp"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="5dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="TODO"/>
-
-    <com.thedeveloperworldisyours.evaluationtask.view.CustomTextView
-        android:id="@+id/item_list_secondLine"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/item_list_icon"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="12sp"/>
 
     <com.thedeveloperworldisyours.evaluationtask.view.CustomTextView
         android:id="@+id/item_list_firstLine"
-        android:layout_width="fill_parent"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:singleLine="true"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/item_list_secondLine"
+        android:layout_above="@+id/item_list_secondLine"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/item_list_icon"
+        android:ellipsize="end"
         android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="16sp" />
+        android:maxLines="1"
+        android:singleLine="true"
+        style="@style/CodeFont" />
+
+    <com.thedeveloperworldisyours.evaluationtask.view.CustomTextView
+        android:id="@+id/item_list_secondLine"
+        android:layout_width="match_parent"
+        android:layout_height="26dip"
+        android:layout_above="@id/item_list_secondLine"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Description"
+        style="@style/CodeFontNormal"
+        android:textSize="12sp" />
 
 </RelativeLayout>
