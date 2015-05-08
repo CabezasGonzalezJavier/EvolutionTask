@@ -169,6 +169,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Constants.INTENT, mItemList.get(position).getId());
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
 

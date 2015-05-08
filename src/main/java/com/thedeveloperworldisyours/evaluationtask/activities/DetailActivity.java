@@ -224,5 +224,19 @@ public class DetailActivity extends ActionBarActivity {
             buildView();
         }
     }
+    /**
+     * Created for animation between activities
+     */
+    public void cameback()
+    {
+        finish();
+        overridePendingTransition(R.anim.right, R.anim.left);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        cameback();
+    }
 }
 
